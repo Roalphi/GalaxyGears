@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Buy {{ car.name }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #0f0f0f;
+      color: white;
+      padding: 2rem;
+    }
+
+    .buy-container {
+      max-width: 500px;
+      margin: 2rem auto;
+      background-color: #1c1c1c;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 140, 255, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .car-preview img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.2rem;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background-color: #059669;
+    }
+  </style>
+</head>
+<body>
+  <div class="buy-container">
+    <h2>Buy {{ car.name }}</h2>
+    <div class="car-preview">
+      <img src="{{ car.image_url }}" alt="{{ car.name }}">
+      <p><strong>Brand:</strong> {{ car.brand }}</p>
+      <p><strong>Price:</strong> ${{ car.price }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('process_payment', car_id=car.id) }}">
+      <div class="form-group">
+        <label for="card_number">Card Number</label>
+        <input type="text" name="card_number" required>
+      </div>
+      <div class="form-group">
+        <label for="expiry">Expiry Date</label>
+        <input type="text" name="expiry" placeholder="MM/YY" required>
+      </div>
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input type="text" name="cvv" required>
+      </div>
+      <button type="submit" class="btn">Pay ${{ car.price }}</button>
+    </form>
+  </div>
+</body>
+</html>

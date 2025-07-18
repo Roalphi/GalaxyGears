@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade & Exchange - GalaxyGears</title>
+  <link rel="stylesheet" href="../static/style_home.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Winky Rough', sans-serif;
+    }
+    .step.active {
+      border-color: #3b82f6;
+      background-color: #1e293b;
+      color: white;
+    }
+    .custom-input {
+      background-color: #1f2937;
+      color: white;
+      border: 1px solid #374151;
+    }
+    .custom-input::placeholder {
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white">
+  <!-- Navigation Header -->
+  <header class="white-header">
+    <div class="logo">
+      <img src="/static/assets/logo.jpg" alt="GalaxyGears Logo">
+    </div>
+     <ul class="navlist">
+        <li><a href="/home" class="{{ 'active' if request.endpoint == 'home' else '' }}"><i class="fas fa-home"></i> Welcome</a></li>
+        <li><a href="/new_arrivals" class="{{ 'active' if request.endpoint == 'new_arrivals' else '' }}"><i class="fas fa-car"></i> Start Exploring</a></li>
+        <li><a href="/trade_and_exchange" class="{{ 'active' if request.endpoint == 'trade_and_exchange' else '' }}"><i class="fas fa-exchange-alt"></i> Trade & Upgrade</a></li>
+        <li><a href="/about-us" class="{{ 'active' if request.endpoint == 'about_us' else '' }}"><i class="fas fa-info-circle"></i> Our Story</a></li>
+    </ul>
+    <div class="right-content">
+      {% if 'user' in session %}
+        <a href="/profile" class="nav-btn">
+          <img src="/static/{{ session['user_image'] }}" alt="User Profile" class="user-profile-image">
+          <span>Hi, {{ session['user'] }}</span>
+        </a>
+      {% else %}
+        <a href="/login" class="nav-btn">Get Started</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-cover bg-center h-[400px] flex items-center justify-center p-20" style="background-image: url('../static/assets/car3.jpg');">
+    <div class="text-center bg-black bg-opacity-60 p-8 rounded">
+      <h1 class="text-4xl font-bold">Trade & Exchange</h1>
+      <p class="text-lg mt-4">Upgrade your ride in just a few steps.</p>
+      <a href="#form1" class="mt-6 inline-block bg-white text-black px-6 py-2 rounded-full hover:bg-gray-300">Start Now</a>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-16 px-6 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-semibold text-center mb-10" data-aos="fade-up">How It Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+      <div class="p-6 bg-gray-900 shadow rounded-lg" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-blue-400 text-4xl mb-4">1️⃣</div>
+        <h3 class="font-semibold mb-2">Tell Us About Your Car</h3>
+        <p>Fill out a short form with your car's details and condition.</p>
+      </div>
+      <div class="p-6 bg-gray-900 shadow rounded-lg" data-aos="fade-up" data-aos-delay="200">
+        <div class="text-blue-400 text-4xl mb-4">2️⃣</div>
+        <h3 class="font-semibold mb-2">Get a Valuation</h3>
+        <p>We’ll instantly give you a trade-in estimate based on market data.</p>
+      </div>
+      <div class="p-6 bg-gray-900 shadow rounded-lg" data-aos="fade-up" data-aos-delay="300">
+        <div class="text-blue-400 text-4xl mb-4">3️⃣</div>
+        <h3 class="font-semibold mb-2">Pick Your New Ride</h3>
+        <p>Explore our collection and choose your next dream car.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progress Tracker -->
+  <section class="py-8 px-6 max-w-3xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">Your Progress</h2>
+    <div class="flex justify-between items-center">
+      <div class="step w-1/3 p-2 text-center border-2 border-white rounded-lg">Step 1</div>
+      <div class="step w-1/3 p-2 text-center border-2 border-white rounded-lg">Step 2</div>
+      <div class="step w-1/3 p-2 text-center border-2 border-white rounded-lg">Step 3</div>
+    </div>
+  </section>
+
+  <!-- Form Step 1 -->
+  <section id="form1" class="py-12 px-6 max-w-3xl mx-auto bg-gray-900 shadow rounded-lg">
+    <h2 class="text-2xl font-semibold mb-6">Your Current Car</h2>
+    <form id="currentCarForm" class="space-y-4">
+      <input type="text" name="make_model" placeholder="Make & Model" required class="w-full p-3 custom-input rounded">
+      <input type="text" name="year" placeholder="Year" required class="w-full p-3 custom-input rounded">
+      <input type="text" name="mileage" placeholder="Mileage" required class="w-full p-3 custom-input rounded">
+      <textarea name="car_condition" placeholder="Condition Details" required class="w-full p-3 custom-input rounded"></textarea>
+      <input type="file" name="car_image" class="w-full p-3 custom-input rounded">
+      <button type="button" onclick="goToNext()" class="bg-white text-black px-6 py-2 rounded hover:bg-gray-300">Next</button>
+    </form>
+  </section>
+
+  <!-- Form Step 2 -->
+  <section id="form2" class="hidden py-12 px-6 max-w-3xl mx-auto bg-gray-900 shadow rounded-lg">
+    <h2 class="text-2xl font-semibold mb-6">Choose Your Upgrade</h2>
+    <form id="exchangeCarForm" class="space-y-4">
+      <input type="text" name="desired_make_model" placeholder="Desired Make & Model" required class="w-full p-3 custom-input rounded">
+      <input type="text" name="budget" placeholder="Budget" required class="w-full p-3 custom-input rounded">
+      <button type="button" onclick="submitForms()" class="bg-white text-black px-6 py-2 rounded hover:bg-gray-300">Submit</button>
+    </form>
+  </section>
+
+  <!-- Suggested Upgrades -->
+  <section class="py-16 px-6 max-w-6xl mx-auto">
+    <h2 class="text-2xl font-semibold text-center mb-10" data-aos="fade-up">Suggested Upgrades</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-900 rounded shadow hover:scale-105 transform transition duration-300" data-aos="fade-up">
+        <img src="https://source.unsplash.com/400x300/?car1" class="rounded-t w-full">
+        <div class="p-4">
+          <h3 class="font-bold">2021 Tesla Model 3</h3>
+          <p class="text-sm text-gray-300">Electric, Low Mileage</p>
+        </div>
+      </div>
+      <div class="bg-gray-900 rounded shadow hover:scale-105 transform transition duration-300" data-aos="fade-up" data-aos-delay="100">
+        <img src="https://source.unsplash.com/400x300/?car2" class="rounded-t w-full">
+        <div class="p-4">
+          <h3 class="font-bold">2020 BMW 3 Series</h3>
+          <p class="text-sm text-gray-300">Luxury, Certified</p>
+        </div>
+      </div>
+      <div class="bg-gray-900 rounded shadow hover:scale-105 transform transition duration-300" data-aos="fade-up" data-aos-delay="200">
+        <img src="https://source.unsplash.com/400x300/?car3" class="rounded-t w-full">
+        <div class="p-4">
+          <h3 class="font-bold">2019 Audi A4</h3>
+          <p class="text-sm text-gray-300">Premium, Low Mileage</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    const form1 = document.getElementById("form1");
+    const form2 = document.getElementById("form2");
+    const steps = document.querySelectorAll(".step");
+    let currentStep = 0;
+
+    function goToNext() {
+      form1.classList.add('hidden');
+      form2.classList.remove('hidden');
+      steps[currentStep].classList.add("active");
+      currentStep++;
+    }
+
+    function submitForms() {
+      steps[currentStep].classList.add("active");
+
+      const form1Data = new FormData(document.getElementById("currentCarForm"));
+      const form2Data = new FormData(document.getElementById("exchangeCarForm"));
+
+      const combinedData = {
+        make_model: form1Data.get("make_model"),
+        year: form1Data.get("year"),
+        mileage: form1Data.get("mileage"),
+        car_condition: form1Data.get("car_condition"),
+        desired_make_model: form2Data.get("desired_make_model"),
+        budget: form2Data.get("budget")
+      };
+
+      fetch("/trade_and_exchange", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(combinedData)
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = "thank_you.html";
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error submitting form. Please try again later.');
+      });
+    }
+  </script>
+</body>
+</html>

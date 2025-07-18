@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GalaxyGears Intro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #ffffff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+      z-index: 10;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      opacity: 0;
+      animation: logoAppear 2s ease-in forwards;
+    }
+
+    .text {
+      font-size: 36px;
+      color: #333;
+      display: flex;
+      gap: 5px;
+      z-index: 2;
+      font-weight: bold;
+      font-family: 'Winky Rough', sans-serif;
+    }
+
+    .letter {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      font-weight: bold;
+      font-family: 'Winky Rough', sans-serif;
+    }
+
+    .subtext-container {
+      display: flex;
+      align-items: center;
+      margin-top: 30px;
+      gap: 20px;
+      font-family: 'Winky Rough', sans-serif;
+    }
+
+    .line {
+      width: 2px;
+      height: 0;
+      background-color: #333;
+      transition: height 2s ease;
+    }
+
+    .subtext {
+      font-size: 24px;
+      color: #555;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    @keyframes logoAppear {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .shape {
+      position: absolute;
+      bottom: -50px;
+      width: 30px;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      animation: floatUp linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.6;
+      }
+      50% {
+        transform: translateY(-60vh) translateX(10px);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-120vh) translateX(-10px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shape" style="left: 5%; width: 30px; height: 30px; animation-duration: 6s; animation-delay: 0s;"></div>
+  <div class="shape" style="left: 18%; width: 55px; height: 55px; animation-duration: 8s; animation-delay: 1s;"></div>
+  <div class="shape" style="left: 32%; width: 20px; height: 20px; animation-duration: 5s; animation-delay: 0.5s;"></div>
+  <div class="shape" style="left: 48%; width: 65px; height: 65px; animation-duration: 10s; animation-delay: 2s;"></div>
+  <div class="shape" style="left: 63%; width: 25px; height: 25px; animation-duration: 6.5s; animation-delay: 1.2s;"></div>
+  <div class="shape" style="left: 75%; width: 70px; height: 70px; animation-duration: 9s; animation-delay: 2.5s;"></div>
+  <div class="shape" style="left: 88%; width: 22px; height: 22px; animation-duration: 5.5s; animation-delay: 3s;"></div>
+
+  <div class="container" id="splashContainer">
+    <div class="row">
+      <img src="{{ url_for('static', filename='assets/logo.jpg') }}" class="logo" id="logo">
+      <div class="text" id="text"></div>
+    </div>
+    <div class="subtext-container">
+      <div class="line" id="line"></div>
+      <div class="subtext" id="subtext">Drive Your Dream, Explore the Galaxy!</div>
+    </div>
+  </div>
+
+  <script>
+    const logo = document.getElementById('logo');
+    const textContainer = document.getElementById('text');
+    const line = document.getElementById('line');
+    const subtext = document.getElementById('subtext');
+    const fullText = "Welcome to Galaxy Gears";
+    let index = 0;
+
+    function typeLetter() {
+      if (index < fullText.length) {
+        const span = document.createElement('span');
+        span.className = 'letter';
+        span.innerText = fullText[index];
+        textContainer.appendChild(span);
+        setTimeout(() => {
+          span.style.opacity = 1;
+          span.style.transform = 'translateY(0)';
+        }, 50);
+        index++;
+        setTimeout(typeLetter, 100);
+      } else {
+        setTimeout(revealLine, 600);
+      }
+    }
+
+    function revealLine() {
+      line.style.height = "50px";
+      setTimeout(showSubtext, 800);
+    }
+
+    function showSubtext() {
+      subtext.style.opacity = 1;
+      subtext.style.transform = 'translateX(0)';
+      setTimeout(() => {
+        window.location.href = "/home";
+      }, 2000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(typeLetter, 300);
+    });
+  </script>
+</body>
+</html>

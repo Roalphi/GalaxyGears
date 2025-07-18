@@ -1,0 +1,304 @@
+/* === Global Base Styling === */
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Winky Rough', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === Section: New Arrivals === */
+.new-arrivals {
+  padding: 4% 5%;
+  text-align: center;
+  background-color: transparent;
+}
+
+.new-arrivals .section-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 100px;
+}
+
+/* === Grid Layout === */
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 40px 60px;
+  justify-items: center;
+}
+
+/* === Car Card === */
+.car-card {
+  background: #111;
+  width: 280px;
+  height: 380px;
+  padding: 20px;
+  border-radius: 50px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(50px) scale(0.95);
+}
+
+.car-card.show {
+  animation: fadeInUpZoom 0.8s ease forwards;
+}
+
+.car-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+.car-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 40px;
+  margin-bottom: 15px;
+}
+
+.car-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.car-price {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.car-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #999;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.car-rating .stars {
+  color: #fff;
+}
+
+.view-details-btn {
+  padding: 10px 20px;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.view-details-btn:hover {
+  background: #fff;
+  color: #000;
+  transform: scale(1.05);
+}
+
+/* === Filter Button === */
+.filter-btn {
+  padding: 12px 25px;
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  position: absolute;
+  top: 150px;
+  right: 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* === Modal === */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: #111;
+  color: #fff;
+  margin: auto;
+  padding: 30px 40px;
+  border-radius: 20px;
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  color: #ccc;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #fff;
+}
+
+/* === Filter Form === */
+form#filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px 30px;
+  padding: 20px;
+  background: #222;
+  border-radius: 12px;
+  color: #fff;
+}
+
+form#filter-form label {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+form#filter-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  font-size: 14px;
+  background: #000;
+  color: #fff;
+}
+
+.apply-btn {
+  grid-column: span 2;
+  padding: 12px;
+  font-size: 16px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.apply-btn:hover {
+  background: #ccc;
+  color: #000;
+}
+
+/* === Applied Filters === */
+.applied-filters {
+  margin: 20px 0 10px 20px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.filter-tag {
+  background-color: #222;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.05);
+  transition: background-color 0.3s ease;
+}
+
+.filter-tag:hover {
+  background-color: #333;
+}
+
+.filter-tag .remove-filter {
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  background: none;
+  border: none;
+  color: red;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* === Animation === */
+@keyframes fadeInUpZoom {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    padding: 10px 15px;
+    margin: 0 10px;
+    text-decoration: none;
+    background-color: #444;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.pagination a.disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+.pagination a:hover:not(.disabled) {
+    background-color: #007bff;
+}
+
+.pagination .page-info {
+    font-size: 16px;
+    color: white;
+}

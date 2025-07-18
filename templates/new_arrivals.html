@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>New Arrivals - GalaxyGears</title>
+    <link rel="stylesheet" href="/static/style_home.css">
+    <link rel="stylesheet" href="/static/style_new_cars.css">
+    <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="white-header">
+        <div class="logo">
+            <img src="/static/assets/logo.jpg" alt="GalaxyGears Logo" class="logo-img">
+        </div>
+        <ul class="navlist">
+            <li><a href="/home" class="{{ 'active' if request.endpoint == 'home' else '' }}"><i class="fas fa-home"></i> Welcome</a></li>
+            <li><a href="/new-arrivals" class="{{ 'active' if request.endpoint == 'new_arrivals' else '' }}"><i class="fas fa-car"></i> Start Exploring</a></li>
+            <li><a href="/trade_and_exchange" class="{{ 'active' if request.endpoint == 'trade_in' else '' }}"><i class="fas fa-exchange-alt"></i> Trade & Upgrade</a></li>
+            <li><a href="/about-us" class="{{ 'active' if request.endpoint == 'about_us' else '' }}"><i class="fas fa-info-circle"></i> Our Story</a></li>
+        </ul>
+        <div class="right-content">
+            {% if 'user' in session %}
+                <a href="/profile">
+                    <div class="user-initial" style="background-color: {{ session['user_color'] }}">
+                        {{ session['user'][0]|upper }}
+                    </div>
+                </a>
+            {% else %}
+                <a href="/login" class="nav-btn">Get Started</a>
+            {% endif %}
+        </div>
+    </header>
+    <section class="new-arrivals">
+        <div class="new-arrivals-header">
+            <h2 class="section-title">Find your ride</h2>
+            <button class="filter-btn" onclick="openFilterModal()">Filter</button>
+            <div class="applied-filters">
+                <h4>Applied Filters :</h4>
+                {% if filters and filters|length > 0 %}
+                    {% for key, value in filters.items() %}
+                        <span class="filter-tag">
+                            {{ key.replace('-', ' ').title() }}: {{ value }}
+                            <button class="remove-filter" data-key="{{ key }}">✕</button>
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    <span class="filter-tag">None</span>
+                {% endif %}
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+        <form method="GET" action="{{ url_for('new_arrivals') }}" style="display: inline-block; width: 60%;">
+            <input
+                type="text"
+                name="query"
+                value="{{ search_query }}"
+                placeholder="Search by Brand, Model, Year, Features..."
+                style="width: 80%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px;">
+            <button
+                type="submit"
+                style="padding: 10px 20px; font-size: 16px; background-color: blue; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                Search
+            </button>
+        </form>
+    </div>
+        <div class="car-grid">
+            {% for car in cars %}
+                <div class="car-card">
+                    <img src="{{ car.image_url }}" alt="{{ car.name }}" class="car-image">
+                    <h3 class="car-name">{{ car.name }}</h3>
+                    <p class="car-price">${{ car.price | round(2) }}</p>
+                    {% if car.rating %}
+                        <p class="car-rating">
+                            <span class="rating-label">Rating:</span>
+                            <span class="stars">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= car.rating|round(0, 'floor') %}
+                                        <i class="fas fa-star"></i>
+                                    {% elif i - car.rating < 1 %}
+                                        <i class="fas fa-star-half-alt"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                            <span class="rating-number">({{ car.rating | round(1) }}/5)</span>
+                        </p>
+                    {% endif %}
+                    <a href="{{ url_for('car_details', car_id=car.id) }}" class="view-details-btn">View Details</a>
+                </div>
+            {% else %}
+                <p>No cars available for the applied filter</p>
+            {% endfor %}
+        </div>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="?page={{ page - 1 }}" style="margin-right: 20px;"
+         {% if page <= 1 %} onclick="return false;" style="color: grey;" {% endif %}>⟵ Previous</a>
+
+      <span>Page {{ page }}</span>
+
+      <a href="?page={{ page + 1 }}" style="margin-left: 20px;"
+         {% if not has_next %} onclick="return false;" style="color: grey;" {% endif %}>Next ⟶</a>
+    </div>
+    </section>
+    <button class="filter-btn" onclick="openFilterModal()">Filter</button>
+    <div id="filterModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFilterModal()">&times;</span>
+            <h2>Filter Cars</h2>
+            <form id="filter-form" method="GET" action="/new_arrivals">
+                {% macro option(value, label, field) %}
+                    <option value="{{ value }}" {% if request.args.get(field) == value %}selected{% endif %}>{{ label }}</option>
+                {% endmacro %}
+
+                <label for="price-range">Price Range:</label>
+                <select id="price-range" name="price-range">
+                    <option value="" disabled {% if not request.args.get('price-range') %}selected{% endif %}>Select</option>
+                    {{ option('10000', 'Under $10,000', 'price-range') }}
+                    {{ option('20000', 'Under $20,000', 'price-range') }}
+                    {{ option('30000', 'Under $30,000', 'price-range') }}
+                    {{ option('50000', 'Under $50,000', 'price-range') }}
+                    {{ option('50000plus', 'Above $50,000', 'price-range') }}
+                </select>
+
+                <label for="brand">Brand:</label>
+                <select id="brand" name="brand">
+                    <option value="" disabled {% if not request.args.get('brand') %}selected{% endif %}>Select</option>
+                    {% for brand in ['toyota', 'honda', 'ford', 'chevrolet', 'bmw', 'audi', 'mercedes', 'hyundai', 'kia', 'tesla', 'nissan', 'mahindra', 'tata'] %}
+                        <option value="{{ brand }}" {% if request.args.get('brand') == brand %}selected{% endif %}>{{ brand.title() }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="year">Year:</label>
+                <select id="year" name="year">
+                    <option value="" disabled {% if not request.args.get('year') %}selected{% endif %}>Select</option>
+                    {% for y in range(2020, 2026) %}
+                        <option value="{{ y }}" {% if request.args.get('year') == y|string %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="condition">Condition:</label>
+                <select id="condition" name="condition">
+                    <option value="" disabled {% if not request.args.get('condition') %}selected{% endif %}>Select</option>
+                    {{ option('new', 'New', 'condition') }}
+                    {{ option('used', 'Used', 'condition') }}
+                    {{ option('certified', 'Certified Pre-Owned', 'condition') }}
+                </select>
+
+                <label for="fuel-type">Fuel Type:</label>
+                <select id="fuel-type" name="fuel-type">
+                    <option value="" disabled {% if not request.args.get('fuel-type') %}selected{% endif %}>Select</option>
+                    {% for fuel in ['petrol', 'diesel', 'electric', 'hybrid', 'cng'] %}
+                        <option value="{{ fuel }}" {% if request.args.get('fuel-type') == fuel %}selected{% endif %}>{{ fuel.title() }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="transmission">Transmission:</label>
+                <select id="transmission" name="transmission">
+                    <option value="" disabled {% if not request.args.get('transmission') %}selected{% endif %}>Select</option>
+                    {% for trans in ['manual', 'automatic', 'cvt', 'amt', 'dct'] %}
+                        <option value="{{ trans }}" {% if request.args.get('transmission') == trans %}selected{% endif %}>{{ trans.upper() }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="body-type">Body Type:</label>
+                <select id="body-type" name="body-type">
+                    <option value="" disabled {% if not request.args.get('body-type') %}selected{% endif %}>Select</option>
+                    {% for body in ['hatchback', 'sedan', 'suv', 'coupe', 'convertible', 'pickup'] %}
+                        <option value="{{ body }}" {% if request.args.get('body-type') == body %}selected{% endif %}>{{ body.title() }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="color">Color:</label>
+                <select id="color" name="color">
+                    <option value="" disabled {% if not request.args.get('color') %}selected{% endif %}>Select</option>
+                    {% for color in ['white', 'black', 'silver', 'blue', 'red', 'grey'] %}
+                        <option value="{{ color }}" {% if request.args.get('color') == color %}selected{% endif %}>{{ color.title() }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="seats">Seating Capacity:</label>
+                <select id="seats" name="seats">
+                    <option value="" disabled {% if not request.args.get('seats') %}selected{% endif %}>Select</option>
+                    {% for seat in ['2', '4', '5', '6', '7'] %}
+                        <option value="{{ seat }}" {% if request.args.get('seats') == seat %}selected{% endif %}>{{ seat }} Seater</option>
+                    {% endfor %}
+                </select>
+
+                <label for="features">Features:</label>
+                <select id="features" name="features">
+                    <option value="" disabled {% if not request.args.get('features') %}selected{% endif %}>Select</option>
+                    {% for feature in ['sunroof', 'camera', 'touchscreen', 'airbags', 'abs', 'bluetooth'] %}
+                        <option value="{{ feature }}" {% if request.args.get('features') == feature %}selected{% endif %}>{{ feature.title() }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating">
+                    <option value="" disabled {% if not request.args.get('rating') %}selected{% endif %}>Select</option>
+                    {% for r in range(1, 6) %}
+                        <option value="{{ r }}" {% if request.args.get('rating') == r|string %}selected{% endif %}>{{ r }} Star{{ 's' if r > 1 }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="apply-btn">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById("filterModal");
+
+            window.openFilterModal = () => modal.style.display = "block";
+            window.closeFilterModal = () => modal.style.display = "none";
+
+            window.onclick = function (event) {
+                if (event.target === modal) modal.style.display = "none";
+            };
+
+            const filterForm = document.getElementById('filter-form');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(filterForm);
+                    const params = new URLSearchParams(window.location.search);
+
+                    formData.forEach((value, key) => {
+                        if (value && value !== "") {
+                            params.set(key, value);
+                        } else {
+                            params.delete(key);
+                        }
+                    });
+
+                    const newUrl = filterForm.action + '?' + params.toString();
+                    window.location.href = newUrl;
+                });
+            }
+        });
+        document.querySelectorAll('.remove-filter').forEach(button => {
+            button.addEventListener('click', function () {
+                const key = this.getAttribute('data-key');
+                const params = new URLSearchParams(window.location.search);
+                params.delete(key);
+                const newUrl = window.location.pathname + '?' + params.toString();
+                window.location.href = newUrl;
+            });
+        });
+
+          const observer = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('show');
+                } else {
+                  entry.target.classList.remove('show');
+                }
+              });
+            }, {
+              threshold: 0.2
+            });
+
+            document.querySelectorAll('.car-card').forEach(card => {
+              observer.observe(card);
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const prevPageLink = document.querySelector('.prev');
+                const nextPageLink = document.querySelector('.next');
+
+                // Disable previous link on first page and next link if there's no next page
+                if (prevPageLink && prevPageLink.classList.contains('disabled')) {
+                    prevPageLink.style.cursor = 'not-allowed';
+                }
+                if (nextPageLink && nextPageLink.classList.contains('disabled')) {
+                    nextPageLink.style.cursor = 'not-allowed';
+                }
+            });
+
+    </script>
+</body>
+</html>
+

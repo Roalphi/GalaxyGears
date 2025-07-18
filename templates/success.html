@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Success - GalaxyGears</title>
+  <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #0d1b2a, #000);
+      font-family: 'Winky Rough', sans-serif;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    .success-box {
+      text-align: center;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .checkmark {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3f80ff, #3066d8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 30px #3f80ffaa, 0 0 80px #3f80ff55;
+    }
+
+    .checkmark i {
+      font-size: 60px;
+      color: white;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-top: 10px;
+      background: linear-gradient(90deg, #4facfe, #00f2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      margin-top: 10px;
+      color: #ccc;
+      font-size: 18px;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(90deg, #00f2fe, #4facfe);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px #00f2fe88;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 30px #3f80ffaa, 0 0 80px #3f80ff55;
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 40px #3f80ffcc, 0 0 90px #3f80ff77;
+      }
+    }
+
+    @keyframes rotateGlow {
+      0% {
+        transform: rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(360deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="success-box">
+    <div class="checkmark">
+      <i class='bx bx-check'></i>
+    </div>
+    <h1>{{ message }}</h1>
+    <p>Redirecting in a moment...</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    function launchConfetti() {
+      const duration = 2 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function () {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
+        }));
+      }, 250);
+    }
+
+    launchConfetti();
+
+    setTimeout(() => {
+      window.location.href = "{{ redirect_url }}";
+    }, 3000);
+  </script>
+</body>
+</html>

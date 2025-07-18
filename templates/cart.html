@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Winky Rough',sans-serif;
+      background: black;
+      color: white;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    .cart-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .cart-item-wrapper {
+      position: relative;
+      width: 300px;
+    }
+
+    .cart-item {
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 140, 255, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+
+    .cart-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .cart-details {
+      padding: 1rem;
+    }
+
+    .cart-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1rem 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+    }
+
+    .btn.remove {
+      background-color: #dc3545;
+    }
+
+    .btn.buy {
+      background-color: #10b981;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #1c1c1c;
+      margin: 10% auto;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      color: white;
+      box-shadow: 0 0 10px #0ff;
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .close {
+      color: white;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: none;
+      margin-top: 0.3rem;
+    }
+
+    .btn.pay {
+      width: 100%;
+      margin-top: 1rem;
+      background-color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Your Cart</h1>
+
+<div class="cart-container">
+  {% for car in cars %}
+    <div class="cart-item-wrapper">
+      <div class="cart-item">
+        <img src="{{ car.image_url }}" alt="{{ car.name }}">
+        <div class="cart-details">
+          <h3>{{ car.name }}</h3>
+          <p><strong>Brand:</strong> {{ car.brand }}</p>
+          <p><strong>Price:</strong> ${{ car.price }}</p>
+        </div>
+        <div class="cart-actions">
+          <form method="POST" action="{{ url_for('toggle_cart', car_id=car.id) }}">
+            <button type="submit" class="btn remove"><i class="fas fa-trash"></i> Remove</button>
+          </form>
+          <button class="btn buy" onclick="openBuyModal('{{ car.id }}', '{{ car.name }}', '{{ car.price }}')">
+            <i class="fas fa-shopping-cart"></i> Buy Now
+          </button>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Modal -->
+<div id="buyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeBuyModal()">&times;</span>
+    <h2 id="modalTitle">Buy Now</h2>
+    <form method="POST" id="paymentForm">
+      <input type="hidden" name="car_id" id="modalCarId">
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" name="card_number" required>
+      </div>
+      <div class="form-group">
+        <label>Expiry Date</label>
+        <input type="text" name="expiry" placeholder="MM/YY" required>
+      </div>
+      <div class="form-group">
+        <label>CVV</label>
+        <input type="text" name="cvv" required>
+      </div>
+      <button type="submit" class="btn pay">Pay</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openBuyModal(carId, carName, carPrice) {
+    document.getElementById("modalTitle").innerText = `Buy ${carName} - $${carPrice}`;
+    document.getElementById("modalCarId").value = carId;
+    document.getElementById("buyModal").style.display = "block";
+  }
+
+  function closeBuyModal() {
+    document.getElementById("buyModal").style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target === document.getElementById("buyModal")) {
+      closeBuyModal();
+    }
+  };
+</script>
+
+</body>
+</html>

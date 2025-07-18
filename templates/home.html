@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Home - GalaxyGears</title>
+    <link rel="stylesheet" href="/static/style_home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .modal.show { display: block; }
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            color: #fff;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+        .close:hover { color: #ff4d4d; }
+        .readonly-text {
+            background-color: #2c2c2c;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .profile-picture {
+            max-width: 150px;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .sparkle-button {
+            background: #3498db;
+            border: none;
+            padding: 12px 24px;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .centered {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 250px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+    @keyframes bounce-click {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .cart-icon {
+        color: white;
+        font-size: 22px;
+        margin-right: 20px;
+        text-decoration: none;
+        position: relative;
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+
+    .cart-icon.clicked {
+        animation: bounce-click 0.4s ease;
+    }
+    </style>
+</head>
+<body>
+    <header class="white-header">
+        <div class="logo">
+            <img src="/static/assets/logo.jpg" alt="GalaxyGears Logo">
+        </div>
+        <ul class="navlist">
+            <li><a href="/home" class="{{ 'active' if request.endpoint == 'home' else '' }}"><i class="fas fa-home"></i> Welcome</a></li>
+            <li><a href="/new_arrivals" class="{{ 'active' if request.endpoint == 'new_arrivals' else '' }}"><i class="fas fa-car"></i> Start Exploring</a></li>
+            <li><a href="/trade_and_exchange" class="{{ 'active' if request.endpoint == 'trade_and_exchange' else '' }}"><i class="fas fa-exchange-alt"></i> Trade & Upgrade</a></li>
+            <li><a href="/about-us" class="{{ 'active' if request.endpoint == 'about_us' else '' }}"><i class="fas fa-info-circle"></i> Our Story</a></li>
+        </ul>
+        <div class="right-content">
+             <a href="/cart" class="cart-icon" title="View Cart">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            {% if 'user' in session %}
+                <a href="javascript:void(0);" onclick="openModal('profileModal')">
+                    <div class="user-initial" style="background-color: {{ session['user_color'] }}">
+                        {{ session['user'][0]|upper }}
+                    </div>
+                </a>
+
+            {% else %}
+                <a href="/login" class="nav-btn">Get Started</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="hero">
+        <video autoplay loop muted id="hero-video">
+            <source src="static/assets/videohome.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-content">
+            <h1><span class="feel">Feel the</span><br><span class="power">Power</span></h1>
+            <p>Muscle. Speed. Legacy.</p>
+        </div>
+    </section>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('profileModal')">&times;</span>
+            <h2 style="text-align:center">My Profile</h2>
+
+            <p><strong>Username:</strong></p>
+            <div class="readonly-text">{{ user.username if user and user.username else 'Not set' }}</div>
+
+            <p><strong>Email:</strong></p>
+            <div class="readonly-text">{{ user.email if user and user.email else 'Not set' }}</div>
+
+            <p><strong>Phone:</strong></p>
+            <div class="readonly-text">{{ user.phone if user and user.phone else 'Not set' }}</div>
+
+            <p><strong>Location:</strong></p>
+            <div class="readonly-text">{{ user.location if user and user.location else 'Not set' }}</div>
+
+            <iframe
+                id="map"
+                src="https://www.google.com/maps?q={{ user.location | urlencode if user and user.location else 'New York' }}&output=embed"
+                loading="lazy"></iframe>
+
+            <div class="centered" style="margin-top:20px;">
+                <button class="sparkle-button" onclick="openModal('editModal')">Edit Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Edit Profile</h2>
+            <form method="POST" enctype="multipart/form-data" action="/update_profile">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="{{ user.username if user else '' }}">
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ user.email if user else '' }}">
+
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" value="{{ user.phone if user else '' }}">
+
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" value="{{ user.location if user else '' }}" oninput="updateMapPreview()">
+
+                <iframe
+                    id="edit-map"
+                    src="https://www.google.com/maps?q={{ user.location | urlencode if user and user.location else 'New York' }}&output=embed"
+                    loading="lazy">
+                </iframe>
+
+                <label for="profile_picture">Profile Picture:</label>
+                <input type="file" id="profile_picture" name="profile_picture">
+
+                <div class="centered">
+                    <button class="sparkle-button" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const video = document.getElementById('hero-video');
+        document.body.addEventListener('click', function () {
+            video.muted = !video.muted;
+            video.play();
+        });
+
+        function openModal(id) {
+            document.getElementById(id).classList.add("show");
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove("show");
+        }
+
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.remove("show");
+                }
+            });
+        }
+
+        function updateMapPreview() {
+            const location = document.getElementById('location').value;
+            const iframe = document.getElementById('edit-map');
+            iframe.src = "https://www.google.com/maps?q=" + encodeURIComponent(location) + "&output=embed";
+        }
+    </script>
+</body>
+</html>

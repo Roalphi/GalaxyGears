@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ car.name }} - Details</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Winky Rough', sans-serif;
+      background: url('{{ car.image_url }}') no-repeat center center/cover;
+      backdrop-filter: blur(8px);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    .container {
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 20px;
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      gap: 2rem;
+      padding: 2rem;
+      box-shadow: 0 0 30px rgba(0, 140, 255, 0.3);
+      animation: popup 0.5s ease-out forwards;
+      transform: scale(0.7);
+      opacity: 0;
+    }
+
+    @keyframes popup {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .image-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 20px;
+      background: white;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+
+    .details {
+      flex: 1;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .details h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .details p {
+      margin: 0.4rem 0;
+    }
+
+    .buttons {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      border: 10px;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+    }
+
+    .cart-btn.removeFromCart {
+      background: #dc3545;
+    }
+
+    .cart-btn.removeFromCart:hover {
+      background: #c82333;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, yellow, transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkle 1s forwards;
+    }
+
+    @keyframes sparkle {
+      0% { transform: scale(1) translate(0, 0); opacity: 1; }
+      100% { transform: scale(0) translate(100px, -100px); opacity: 0; }
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .nav-btn {
+      color: #60a5fa;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+
+    .nav-btn:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      color: white;
+      text-decoration: none;
+      background: rgba(0,0,0,0.5);
+      padding: 5px 10px;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .close-button:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #1c1c1c;
+      margin: 10% auto;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      color: white;
+      box-shadow: 0 0 10px #0ff;
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .close {
+      color: white;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: none;
+      margin-top: 0.3rem;
+    }
+
+    .btn.pay {
+      width: 100%;
+      margin-top: 1rem;
+      background-color: #3b82f6;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+  <a href="/new_arrivals" class="close-button">✖</a>
+
+  <div class="image-container">
+    <img src="{{ car.image_url }}" alt="{{ car.name }}">
+  </div>
+
+  <div class="details">
+    <h1>{{ car.name }}</h1>
+    <p><strong>{{ car.brand }}</strong> - {{ car.year }}</p>
+    <p><strong>Price:</strong> ${{ car.price }}</p>
+    <p><strong>Mileage:</strong> {{ car.mileage }} km</p>
+    <p><strong>Body Type:</strong> {{ car.body_type }}</p>
+    <p><strong>Fuel Type:</strong> {{ car.fuel_type }}</p>
+    <p><strong>Condition:</strong> {{ car.condition }}</p>
+    <p><strong>Color:</strong> {{ car.color }}</p>
+    <p><strong>Engine Type:</strong> {{ car.engine_type }}</p>
+    <p><strong>Description:</strong> {{ car.description }}</p>
+
+    <div class="buttons">
+      <form method="POST" action="{{ url_for('toggle_cart', car_id=car.id) }}">
+        {% if car.id in user_cart_car_ids %}
+          <button type="submit" class="btn cart-btn removeFromCart">
+            <i class="fas fa-cart-arrow-down"></i> Remove from Cart
+          </button>
+        {% else %}
+          <button type="submit" class="btn cart-btn addToCart">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+        {% endif %}
+      </form>
+
+     <button class="btn buyNow" onclick="openBuyModal('{{ car.id }}', '{{ car.name }}', '{{ car.price }}')">
+        <i class="fas fa-bolt"></i> Buy Now
+      </button>
+
+
+
+    </div>
+
+    <div class="nav-links">
+      {% if prev_car_id %}
+        <a href="/car_details/{{ prev_car_id }}" class="nav-btn">← Previous</a>
+      {% endif %}
+      {% if next_car_id %}
+        <a href="/car_details/{{ next_car_id }}" class="nav-btn">Next →</a>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="buyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeBuyModal()">&times;</span>
+    <h2 id="modalTitle">Buy Now</h2>
+    <form method="POST" action="{{ url_for('buy_now_modal') }}">
+      <input type="hidden" name="car_id" id="modalCarId">
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" name="card_number" required>
+      </div>
+      <div class="form-group">
+        <label>Expiry Date</label>
+        <input type="text" name="expiry" placeholder="MM/YY" required>
+      </div>
+      <div class="form-group">
+        <label>CVV</label>
+        <input type="text" name="cvv" required>
+      </div>
+      <button type="submit" class="btn pay">Pay</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  function createSparkle(x, y, button) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = (x - button.getBoundingClientRect().left) + 'px';
+    sparkle.style.top = (y - button.getBoundingClientRect().top) + 'px';
+    button.appendChild(sparkle);
+    sparkle.addEventListener('animationend', () => sparkle.remove());
+  }
+
+  document.querySelectorAll('.addToCart, .removeFromCart, .buyNow').forEach(button => {
+    button.addEventListener('click', function(e) {
+      for (let i = 0; i < 6; i++) {
+        createSparkle(e.clientX, e.clientY, this);
+      }
+    });
+  });
+
+  function openBuyModal(carId, carName, carPrice) {
+    document.getElementById("modalTitle").innerText = `Buy ${carName} - $${carPrice}`;
+    document.getElementById("modalCarId").value = carId;
+    document.getElementById("buyModal").style.display = "block";
+  }
+
+  function closeBuyModal() {
+    document.getElementById("buyModal").style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target === document.getElementById("buyModal")) {
+      closeBuyModal();
+    }
+  };
+
+</script>
+
+</body>
+</html>
